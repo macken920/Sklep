@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 public class Product {
 	
@@ -15,12 +17,12 @@ public class Product {
 	@GeneratedValue
 	private Long id;
 	
-	private String productName;
+	private String name;
 	private String description;
-	private String opinions; //rating a pod nim opinia
+	private String opinions; //rating a pod nim opinia doda sie potem opinie
 	
 	private double price;
-	private double rating;
+	private double rating;//do dodania pozniej razem z opiniami
 	private double promotionPrice; //cena w promocji - skreslona stara cena pokazana nowa o ile promotion = true
 	
 	private boolean promotion; //tak/nie
@@ -29,6 +31,7 @@ public class Product {
 	private Producer producer;
 	
 	@ManyToMany
+	@JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
 	private List<Category> category;
 
 	public Long getId() {
@@ -39,12 +42,12 @@ public class Product {
 		this.id = id;
 	}
 
-	public String getProductName() {
-		return productName;
+	public String getName() {
+		return name;
 	}
 
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
@@ -95,6 +98,13 @@ public class Product {
 		this.promotion = promotion;
 	}
 
+	public Producer getProducer() {
+		return producer;
+	}
+
+	public void setProducer(Producer producer) {
+		this.producer = producer;
+	}
 
 	public List<Category> getCategory() {
 		return category;
@@ -103,14 +113,11 @@ public class Product {
 	public void setCategory(List<Category> category) {
 		this.category = category;
 	}
+	
+	
+	
 
-	public Producer getProducer() {
-		return producer;
-	}
 
-	public void setProducer(Producer producer) {
-		this.producer = producer;
-	}
 	
 	
 	

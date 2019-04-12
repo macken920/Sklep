@@ -1,0 +1,23 @@
+<h1>Add:</h1>
+<form>
+	<input type = "text" placeholder="Nazwa" ng-model="aProductCtrl.product.name"><br />
+	<input type = "text" placeholder="Opis" ng-model="aProductCtrl.product.description"><br />
+	<input type = "number" placeholder="Cena" ng-model="aProductCtrl.product.price"><br />
+	<p>Czy jest promocja:<input type = "checkbox" placeholder="promocja" ng-model="aProductCtrl.product.promotion"></p><br />
+	<input type = "number" placeholder="Cena promocyjna" ng-model="aProductCtrl.product.promotionPrice"><br />
+	<p>Wybierz kategorie:</p>
+
+	<select ng-model="aProductCtrl.product.category" ng-options="x.name for x in aProductCtrl.categories"></select>
+	
+	<h1>You selected: {{aProductCtrl.product.category.id}}</h1>
+	
+	<p>Wybierz producenta:</p>
+
+	<select ng-model="aProductCtrl.product.producer" ng-options="x.name for x in aProductCtrl.producers"></select>
+	
+	<h1>You selected: {{aProductCtrl.product.producer.name}}</h1>
+	
+	
+	
+	<button ng-click="aProductCtrl.saveProduct()">Dodaj produkt</button>
+</form>

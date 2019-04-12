@@ -1,0 +1,25 @@
+<h1>Add:</h1>
+<form>
+	<input type = "text" placeholder="Kategoria" ng-model="aCategoryCtrl.category.name"><br />
+	<button ng-click="aCategoryCtrl.saveCategory()">Dodaj kategorie</button>
+</form>
+
+<h1>Wszsytkie dodane kategorie:</h1>
+<ul>
+	<li ng-repeat="b in aCategoryCtrl.categories">
+		<a>{{b.id}} {{b.name}}</a>
+	</li>
+</ul>
+
+
+
+
+<p>Wybierz kategorie:</p>
+
+<select ng-model="aCategoryCtrl.selectedCategory" ng-options="x.name for x in aCategoryCtrl.categories">
+</select>
+
+<h1>You selected: {{aCategoryCtrl.selectedCategory}}</h1>
+
+
+

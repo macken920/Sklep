@@ -1,0 +1,10 @@
+<div class="products-wrapper" ng-controller="ItemListController">
+	<ul class="products-list">
+      <li class="products-list_item"  ng-repeat="product in products">
+        <h1 class="product-name product-text product-text--large">{{product.name}}</h1>
+        <h3 class="product-price product-text product-text--medium">{{product.price}}</h3>
+        <p class="product-description product-text product-text--small">{{product.description}}</p>
+        <button class="product-add_to_cart product-button" ng-click="addProduct($index)">Add to Cart</button>
+      </li>
+    </ul>
+</div>

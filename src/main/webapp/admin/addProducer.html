@@ -1,0 +1,16 @@
+
+ <div ng-app="app" ng-controller="AddProducerController">
+        <form name="upload" class="form" data-ng-submit="addFile()">
+            <p>Please specify a file, or a set of files:<br>
+            <input type="file" name="file" onchange="angular.element(this).scope().attachedFile(this)" /></p>
+            <input type = "text" placeholder="Producent" ng-model=producer.name><br />
+            <button type="submit">Upload</button>
+        </form>   
+    </div>
+	<h1>Wszyscy producenci:</h1>
+	<ul>
+		<li ng-repeat="b in aProducerCtrl.producer">
+			<a>{{b.name}} </a>
+			<img src="http://localhost:8080/downloadFile/{{b.id}}" height="42" width="42">
+		</li>
+	</ul>

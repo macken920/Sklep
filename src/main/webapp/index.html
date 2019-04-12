@@ -1,32 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html data-ng-app="app">
     <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        <title>Spring Boot File Upload / Download Rest API Example</title>
-        <link rel="stylesheet" href="/css/main.css" />
+        <meta charset="UTF-8">
+         <link rel="stylesheet" type="text/css" href="css/cart.css" />
+        <title>Sklep</title>
     </head>
     <body>
-        <noscript>
-            <h2>Sorry! Your browser doesn't support Javascript</h2>
-        </noscript>
-        <div class="upload-container">
-            <div class="upload-header">
-                <h2>Spring Boot File Upload / Download Rest API Example</h2>
-            </div>
-            <div class="upload-content">
-                <div class="single-upload">
-                    <h3>Upload Single File</h3>
-                    <form id="singleUploadForm" name="singleUploadForm">
-                        <input id="singleFileUploadInput" type="file" name="file" class="file-input" required />
-                        <button type="submit" class="primary submit-btn">Submit</button>
-                    </form>
-                    <div class="upload-response">
-                        <div id="singleFileUploadError"></div>
-                        <div id="singleFileUploadSuccess"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <script src="js/main.js" ></script>
+    <a href="#!index">Strona glowna</a>
+	<a href="#!promotions">Promocje</a>
+	<a href="#!products">Produkty</a>
+	<a href="#!producers">Producenci</a>
+	<a href="#!contact">Kontakt</a>
+	<a href="#!register">Rejestracja</a>
+	<a href="#!login">Logowanie</a>
+	
+	
+	<div class="products-wrapper" ng-controller="ItemListController">
+	
+	<div ng-view></div>
+	
+	<ul class="cart-item--list">
+      <li class="cart-item" ng-repeat="item in cart">
+        <button class="cart-item--remove product-button" ng-click="removeProduct(item.id)">Remove</button>
+        <h1 class="cart-item--name product-text--large">{{item.name}}</h1>
+        <p class="cart-item--quantity product-text--small">{{item.quantity}} Nos</p>
+      </li>
+    </ul>
+  </div>
+	
+	
+	
+	
+	
+	
+	
+    
+    
+    <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+	<script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
+	<script type="text/javascript" src="bower_components/angular-resource/angular-resource.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
     </body>
 </html>

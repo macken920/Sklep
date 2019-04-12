@@ -15,8 +15,9 @@ public class ProducerFileStorageService {
 
     @Autowired
     private ProducerRepository dbFileRepository;
+    
 
-    public Producer storeFile(MultipartFile file) {
+    public Producer storeFile(MultipartFile file, String name) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -26,7 +27,7 @@ public class ProducerFileStorageService {
                 throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
             }
 
-            Producer dbFile = new Producer(fileName, file.getContentType(), file.getBytes());
+            Producer dbFile = new Producer(name, fileName, file.getContentType(), file.getBytes());
 
             return dbFileRepository.save(dbFile);
         } catch (IOException ex) {

@@ -1,8 +1,6 @@
 package pl.warapp.controller;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import pl.warapp.exception.MyFileNotFoundException;
 import pl.warapp.model.Category;
 import pl.warapp.model.Producer;
 import pl.warapp.model.Product;
 import pl.warapp.payload.UploadFileResponse;
 import pl.warapp.repository.CategoryRepository;
+import pl.warapp.repository.ProducerRepository;
 import pl.warapp.repository.ProductRepository;
 import pl.warapp.service.ProducerFileStorageService;
 
@@ -39,29 +39,25 @@ public class AssortmentController {
 	CategoryRepository categoryRepository;
 	@Autowired
 	ProductRepository productRepository;
+	@Autowired
+	ProducerRepository producerRepository;
     @Autowired
     private ProducerFileStorageService ProducerFileStorageService;
 
     @PostMapping("/uploadFile")
-    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
-        Producer producer = ProducerFileStorageService.storeFile(file);
+    public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("name") String name) {
+    	System.out.println(name);
+        Producer producer = ProducerFileStorageService.storeFile(file, name);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
                 .path(producer.getId())
                 .toUriString();
 
-        return new UploadFileResponse(producer.getFileName(), fileDownloadUri,
+        return new UploadFileResponse( producer.getFileName(), fileDownloadUri,
                 file.getContentType(), file.getSize());
     }
 
-    @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.asList(files)
-                .stream()
-                .map(file -> uploadFile(file))
-                .collect(Collectors.toList());
-    }
 	
 	
 	
@@ -83,6 +79,11 @@ public class AssortmentController {
 	@PostMapping("/product")
 	public ResponseEntity<?> save(@RequestBody Product product){
 		if(product.getId() == null) {
+			
+			product.getProducer();
+			product.getCategory();
+			System.out.println(product.getProducer());
+			System.out.println(product.getCategory());
 			
 			productRepository.save(product);
 
@@ -115,6 +116,11 @@ public class AssortmentController {
                 .contentType(MediaType.parseMediaType(producer.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + producer.getFileName() + "\"")
                 .body(new ByteArrayResource(producer.getData()));
+    }
+	
+	@GetMapping("/downloadFile")
+	public List<Producer> getFile() {       
+        return producerRepository.findAll();
     }
 	
 	
