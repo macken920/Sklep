@@ -1,1 +1,24 @@
-<p>TESTOOOOOWOWOWOW</p>
+<div ng-show="!authenticated">
+	<div>
+	    <h2>Login</h2>
+	    <form name="form" ng-submit="loginCtrl.login()" role="form">
+	        <div>
+	            <label for="username">Username</label>
+	            <input type="text" name="username" id="username" ng-model="loginCtrl.credentials.username" required />
+	            <span ng-show="form.username.$dirty && form.username.$error.required">Username is required</span>
+	        </div>
+	        <div>
+	            <label for="password">Password</label>
+	            <input type="password" name="password" id="password" ng-model="loginCtrl.credentials.password" required />
+	            <span ng-show="form.password.$dirty && form.password.$error.required">Password is required</span>
+	        </div>
+	        <div class="form-actions">
+	            <button type="submit" ng-disabled="form.$invalid || loginCtrl.dataloading">Login</button>
+	        </div>
+	    </form>
+	</div>
+</div>
+<div ng-show="authenticated">
+	<h2>Czy na pewno chcesz sie wylogowac?</h2>
+	<button ng-click="loginCtrl.logout()">Logout</button>
+</div>

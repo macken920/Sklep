@@ -1,5 +1,5 @@
 angular.module('app', ['ngRoute', 'ngResource'])
-.config(function ($routeProvider) {
+.config(function ($routeProvider, $httpProvider) {
 	$routeProvider
 	.when('/promotions', {
 		templateUrl: 'main/promotions.html',
@@ -31,9 +31,15 @@ angular.module('app', ['ngRoute', 'ngResource'])
 		controller: 'LoginController',
 		controllerAs: 'loginCtrl'
 	})
+		.when('/cart', {
+		templateUrl: 'main/cart.html',
+		controller: 'CartController',
+		controllerAs: 'cartCtrl'
+	})
 	.otherwise({
 		redirectTo: '/products'
 	});
+	$httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 })
 
 .config(function(StorageProvider)  {
@@ -44,6 +50,9 @@ angular.module('app', ['ngRoute', 'ngResource'])
 .constant('CATEGORY_ENDPOINT', '/category')
 .constant('PRODUCER_ENDPOINT', '/downloadFile')
 .constant('PRODUCT_ENDPOINT', '/product')
+.constant('REGISTRATION_ENDPOINT', '/register')
+.constant('LOGIN_ENDPOINT', '/login')
+.constant('ORDERS_ENDPOINT', '/orders')
 
 
 .factory('NewCategory', function($resource, CATEGORY_ENDPOINT) {
@@ -55,6 +64,27 @@ angular.module('app', ['ngRoute', 'ngResource'])
 .factory('NewProduct', function($resource, PRODUCT_ENDPOINT) {
 	return $resource(PRODUCT_ENDPOINT);
 })
+.factory('User', function($resource, REGISTRATION_ENDPOINT) {
+	return $resource(REGISTRATION_ENDPOINT);
+})
+.factory('Login', function($resource, LOGIN_ENDPOINT) {
+	return $resource(LOGIN_ENDPOINT);
+})
+.factory('NewOrder', function($resource, ORDERS_ENDPOINT) {
+	return $resource(ORDERS_ENDPOINT);
+})
+
+
+.run(function ($rootScope, $location, $http, $window){
+	var userData = $window.localStorage.getItem('userData');
+    if (userData) {
+        $http.defaults.headers.common['Authorization'] = 'Basic ' + JSON.parse(userData).authData;
+        $rootScope.authenticated = true;
+    }
+	
+
+})
+
 
 .provider('Storage', function ()  {
     
@@ -105,6 +135,7 @@ angular.module('app', ['ngRoute', 'ngResource'])
 
 .service('Cart', function ($rootScope, Storage) { 
       var vm = this;
+      var sumAll = 0;
     
       $rootScope.$on('onStorageModify', function()  {
         vm.refresh();
@@ -126,8 +157,10 @@ angular.module('app', ['ngRoute', 'ngResource'])
       this.addItem = function(product){
         if(this._cartLookUp(product.id))  {
           this.changeQuantity(product.id);
+          this.sum(product.price);
         }else {
           this._newItem(product);
+          this.sum(product.price);
         }
         
         this.save();
@@ -149,6 +182,7 @@ angular.module('app', ['ngRoute', 'ngResource'])
       };
   
       this.remove = function (id) {
+    	if( this._cart[id].quantity >=1){this.sum(-this._cart[id].price)}
         if(!--this._cart[id].quantity) { delete this._cart[id]; }
         this.save();
       };
@@ -167,7 +201,48 @@ angular.module('app', ['ngRoute', 'ngResource'])
       this.refresh = function() {
         $rootScope.$broadcast('onCartUpdate')
       };
+      this.sum = function(price){
+    	  sumAll = sumAll + price;
+    	  console.log(sumAll); 	  
+      };
   })
+  
+.service('AuthenticationService', function($http, LOGIN_ENDPOINT, $window) {
+	
+	
+	
+	
+	this.authenticate = function(credentials, successCallback) {
+		var authHeader = {Authorization: 'Basic ' + btoa(credentials.username+':'+credentials.password)};
+		var config = {headers: authHeader};
+		$http
+		.post(LOGIN_ENDPOINT, {}, config)
+		.then(function success(value) {
+			
+			var token = $window.btoa(credentials.username+':'+credentials.password);
+			
+            var userData = {
+                userName: credentials.username,
+                authData: token
+            }
+            
+            $window.localStorage.setItem('userData', JSON.stringify(userData));
+             
+            $http.defaults.headers.common.Authorization = 'Basic ' + token;
+            successCallback();
+            
+	
+		}, function error(reason) {
+			console.log('Login error');
+			console.log(reason);
+		});
+	}
+	this.logout = function(successCallback) {
+		delete $http.defaults.headers.post.Authorization;
+		localStorage.removeItem('userData');
+		successCallback();
+	}
+})
 
 .controller('PromotionsController', function() {
 
@@ -177,7 +252,6 @@ angular.module('app', ['ngRoute', 'ngResource'])
 	var vm = this;
 	vm.products = Database.getAll(NewProduct);
 	console.log(vm.products);
-	console.log(vm.products.producer);
 	
 
 })
@@ -190,16 +264,65 @@ angular.module('app', ['ngRoute', 'ngResource'])
 
 })
 
-.controller('RegisterController', function() {
+.controller('RegisterController', function(Database, User) {
+	var vm = this;
+	vm.user = new User();
+	vm.saveUser = function() {
+		Database.add(vm.user);
+		vm.user = new User();
+	}
 
 })
 
-.controller('LoginController', function() {
+.controller('LoginController', function(AuthenticationService, $rootScope, $scope, $location, $window) {
+	var vm = this;
+	vm.credentials = {};
+	
+	
+	
+    
+	var loginSuccess = function() {
+		$rootScope.authenticated = true;
+		$location.path('/products');
+	}
+	var logoutSuccess = function() {
+		$rootScope.authenticated = false;
+		$location.path('/');
+	}
+	vm.login = function() {
+		AuthenticationService.authenticate(vm.credentials, loginSuccess);
+	}
+	vm.logout = function() {
+		AuthenticationService.logout(logoutSuccess);
+	}
+	
+	
+
+})
+
+.controller('CartController', function(NewOrder, Database, Cart) {
+	var vm = this;
+	
+	cart = Cart.getCart();
+	
+	console.log(cart);
+	
+
+	
+
+	
+	
+	
+	
+	vm.order = function(){
+		console.log("wywolanie nowy order");
+	}
 
 })
 
 .controller('ItemListController',function($rootScope, $scope, Cart, Database, NewProduct) {
       
+	
       $scope.cart = Cart.getCart();
       $scope.products = Database.getAll(NewProduct);
       $scope.addProduct = function(index)  {

@@ -6,5 +6,6 @@ import pl.warapp.model.users.User;
 
 
 public interface UserRepository extends JpaRepository<User, Long> {
+	public User findByEmail(String username);
 
 }
