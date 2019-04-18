@@ -300,23 +300,39 @@ angular.module('app', ['ngRoute', 'ngResource'])
 
 })
 
-.controller('CartController', function(NewOrder, Database, Cart) {
+.controller('CartController', function(Cart, $http) {
 	var vm = this;
-	
+	var i = 0;
 	cart = Cart.getCart();
 	
-	console.log(cart);
+	
 	
 
-	
-
-	
-	
-	
-	
 	vm.order = function(){
+		var fd = new FormData(); 
+		
 		console.log("wywolanie nowy order");
+		
+	    angular.forEach(cart, function(product) {
+	    	fd.append("product",product.id);
+	    	fd.append("quantity",product.quantity);
+     
+	    });
+	        
+	    console.log(fd);
+	    
+	    var url = '/orders';
+	    
+        $http.post(url, fd,{headers: {'Content-Type': undefined}}).then(function successCallback(response) {
+       	console.log(response);
+       	localStorage.removeItem('cart');
+       	console.log("Cart Removed");
+       	  }, function errorCallback(response) {
+       		  console.log(response);
+       	  });
+	
 	}
+	
 
 })
 
