@@ -2,12 +2,14 @@ package pl.warapp.model.users;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
-import pl.warapp.model.Product;
+import pl.warapp.model.OrdersProduct;
 
 @Entity
 public class Orders {
@@ -16,11 +18,12 @@ public class Orders {
 	@GeneratedValue
 	private Long id;
 	
-	private int quantity; // ilosc danego produktu
-	private double price; // aktualna cena 1 jednostki produktu - ceny moga sie zmieniac wiec w histori musi byc cena zakupu produktu
 	
-	@ManyToMany
-	private List<Product> product;
+	private double price; // cena calego zamowienia
+	
+	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)//wszystkei zamowione produkty w danym orderze
+	private List<OrdersProduct> ordersProduct;
+
 
 	public Long getId() {
 		return id;
@@ -30,13 +33,7 @@ public class Orders {
 		this.id = id;
 	}
 
-	public int getQuantity() {
-		return quantity;
-	}
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
 
 	public double getPrice() {
 		return price;
@@ -46,13 +43,15 @@ public class Orders {
 		this.price = price;
 	}
 
-	public List<Product> getProduct() {
-		return product;
+	public List<OrdersProduct> getOrdersProduct() {
+		return ordersProduct;
 	}
 
-	public void setProduct(List<Product> product) {
-		this.product = product;
+	public void setOrdersProduct(List<OrdersProduct> ordersProduct) {
+		this.ordersProduct = ordersProduct;
 	}
+
+
 	
 	
 	
