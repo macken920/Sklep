@@ -1,5 +1,6 @@
 package pl.warapp.model.users;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -22,7 +23,7 @@ public class Orders {
 	private double price; // cena calego zamowienia
 	
 	@OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)//wszystkei zamowione produkty w danym orderze
-	private List<OrdersProduct> ordersProduct;
+	private List<OrdersProduct> ordersProduct = new ArrayList<>();
 
 
 	public Long getId() {

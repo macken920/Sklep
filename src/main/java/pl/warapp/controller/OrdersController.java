@@ -82,10 +82,13 @@ public class OrdersController {
 	    		orders.getOrdersProduct().add(ordersProduct);
 	    		
 	    		
+	    		
+	    		
 	    	}
 	    	
 	    	
 	    	
+	    	ordersRepsoitory.save(orders);
 	    	
 	    
 	    	
